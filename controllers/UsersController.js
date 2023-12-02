@@ -24,6 +24,7 @@ class UsersController {
     const authToken = req.headers['x-token'] || null;
     if (!authToken) return res.status(401).json({ error: 'Unauthorized' });
     const userId = await redisClient.get(`auth_${authToken}`);
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
     const user = await dbClient.userCollection.findOne({ _id: ObjectId(userId) });
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
     return res.json({ id: user._id, email: user.email });
