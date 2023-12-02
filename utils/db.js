@@ -13,6 +13,7 @@ class DBClient {
         this.client = client;
         this.isConnected = true;
         this.db = this.client.db(database);
+        this.userCollection = this.db.collection('users');
       }).catch(() => {
         this.isConnected = false;
       });

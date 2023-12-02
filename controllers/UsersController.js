@@ -2,15 +2,6 @@ import crypto from 'crypto';
 
 import dbClient from '../utils/db';
 
-async function _hash(plainText) {
-  return crypto.createHash('sha1').update(plainText).digest('hex');
-}
-
-async function emailExists(email) {
-  const user = await dbClient.userCollection.findOne({ email });
-  return !!user;
-}
-
 class UsersController {
   static async postNew(req, res) {
     const { email, password } = req.body;
@@ -20,10 +11,10 @@ class UsersController {
     if (!password) {
       return res.status(400).json({ error: 'Missing password' });
     }
-    const exists = await emailExists(email);
+    const exists = await dbClient.userCollection.findOne({ email });
     if (exists) return res.status(400).json({ error: 'Already exist' });
 
-    const passwordHash = await _hash(password);
+    const passwordHash = await crypto.createHash('sha1').update(password).digest('hex');
     const result = await dbClient.userCollection.insertOne({ email, password: passwordHash });
     return res.status(201).json({ id: result.insertedId, email });
   }
