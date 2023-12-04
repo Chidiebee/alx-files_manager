@@ -39,7 +39,7 @@ class FilesController {
         name,
         type,
         isPublic,
-        parentId: 0 || ObjectId(parentId),
+        parentId: 0 || parentId,
 
       };
 
