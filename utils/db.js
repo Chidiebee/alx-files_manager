@@ -14,6 +14,7 @@ class DBClient {
         this.isConnected = true;
         this.db = this.client.db(database);
         this.userCollection = this.db.collection('users');
+        this.fileCollection = this.db.collection('files');
       }).catch(() => {
         this.isConnected = false;
       });

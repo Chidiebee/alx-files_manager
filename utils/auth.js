@@ -1,4 +1,7 @@
+import { ObjectId } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
+import redisClient from './redis';
+import dbClient from './db';
 
 export function getAuthHeader(req) {
   const header = req.headers.authorization || null;
@@ -18,4 +21,17 @@ export function extractCredentials(decodedToken) {
 
 export function generateToken() {
   return uuidv4();
+}
+
+export async function getUserId(req) {
+  const authToken = req.headers['x-token'];
+  if (!authToken) return false;
+  const userId = await redisClient.get(`auth_${authToken}`);
+  return userId || false;
+}
+
+export async function retreiveUserFromToken(req) {
+  const userId = await getUserId(req);
+  const user = dbClient.userCollection.findOne({ _id: ObjectId(userId) });
+  return user || false;
 }
